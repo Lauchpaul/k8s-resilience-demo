@@ -1,18 +1,28 @@
 # K8s Self-Healing Demo (The Bare Minimum)
 
-## Worum geht es?
-Ehrlich gesagt: Die Architektur dieser Applikation ist s*ht. Es ist kein Production-Grade Setup, ignoriert Best Practices der Plattformentwicklung und laeuft auf einem rudimentaeren Docker Desktop Cluster. 
+## Purpose
+To be honest: The architecture of this application is s*ht. It is not a production-grade setup, ignores platform engineering best practices, and runs on a rudimentary Docker Desktop cluster. 
 
-Der einzige Sinn und Zweck dieses Projekts ist der isolierte Beweis eines Kernkonzepts von Kubernetes: **Self-Healing und die automatische Wiederherstellung des Soll-Zustands (Reconciliation Loop).**
+The sole purpose and intent of this project is the isolated proof of a core Kubernetes concept: **Self-healing and the automatic restoration of the desired state (Reconciliation Loop).**
 
-## Die Komponenten
-Das Setup besteht aus vier Microservices:
-* **3x Victim Pods (Ports 4000, 4001, 4002):** Dumme Flask-Container. Sie zeigen lediglich ihren aktuellen K8s-Pod-Namen an und warten auf ihre Terminierung.
-* **1x Control Panel (Port 6969):** Ein simples UI, um gezielt Kill-Signale (SIGTERM) an die einzelnen Pods zu senden.
+## The Components
+The setup consists of four microservices:
+* **3x Victim Pods (Ports 4000, 4001, 4002):** Dumb Flask containers. They merely display their current K8s pod name and wait for their termination.
+* **1x Control Panel (Port 6969):** A simple UI to send targeted kill signals (SIGTERM) to the individual pods.
 
-## Ausführung
-Das Start-Skript deployt die Manifeste, ConfigMaps und erzwingt persistente Port-Forwards auf localhost, um das Abbrechen der Tunnel beim Pod-Tod zu umgehen.
+## How to run
+The startup script deploys the manifests, ConfigMaps, and enforces persistent port-forwards to localhost to bypass the tunnel collapsing when a pod dies.
 
 ```bash
 chmod +x start.sh
 ./start.sh
+```
+
+## Cleanup / Teardown
+To stop the application, simply press Ctrl+C in your terminal to kill the active port-forwards.
+
+Since all resources are cleanly isolated within their own namespace, you can completely remove the deployments, services, and ConfigMaps from your cluster with a single command:
+
+```bash
+kubectl delete namespace k8s-demo
+```
